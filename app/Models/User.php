@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Traits\UseUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -46,5 +48,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    public function user_detail(): HasOne {
+        return $this->hasOne(UserDetailModel::class);
+    }
+    
+    public function orders(): HasMany {
+        return $this->hasMany(OrderModel::class);
     }
 }

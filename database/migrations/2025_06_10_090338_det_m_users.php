@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nik', 16);
             $table->string('first_name');
             $table->string('last_name');
+            $table->date('birth_date');
             $table->string('phone_number', 15);
             $table->string('photo');
             $table->enum('gender', ['male', 'female']);
