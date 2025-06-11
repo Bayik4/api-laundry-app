@@ -1,0 +1,2688 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "API Laundry",
+        "version": "1.0",
+        "summary": "This a simple api Laundry App"
+    },
+    "servers": [{ "url": "https://localhost:8000/api/v1" }],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": ["Authentication"],
+                "description": "Register user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string" 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["Authentication"],
+                "description": "Login user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success login.",
+                                    "data": {
+                                        "token": "xxx",
+                                        "token_type": "bearer"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failed login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed login.",
+                                    "errors": [
+                                        "User not exist.",
+                                        "Username or password wrong."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/auth/profile": {
+            "get": {
+                "tags": ["Authentication"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get profile.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get profile.",
+                                    "data": {
+                                        "id": "userId",
+                                        "role": "admin",
+                                        "nik": "1234567898765432",
+                                        "username": "admin",
+                                        "email": "admin@example.com",
+                                        "first_name": "ad",
+                                        "last_name": "min",
+                                        "phone_number": "0857xxx",
+                                        "gender": "male",
+                                        "address": "Somewhare in earth",
+                                        "created_at": "2025-06-05T00:00:00Z"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+              "tags": ["Users Endpoint"],
+                "description": "Get all users",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "description": "Query to search user by name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type":"object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type":"object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "role": {
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "birth_date": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "pagination": {
+                                                    "$ref": "#/components/schemas/Pagination"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Users Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "description": "Create new user",
+                "requestBody": {
+                    "description": "User to add to the system",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["username", "email", "password", "role"]
+                            },
+                            "example": {
+                                "username": "test",
+                                "email": "test@example.com",
+                                "password": "password",
+                                "role": "staff"
+                            } 
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success create new user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "examples": [
+                                        {
+                                            "success": true,
+                                            "message": "Success create user.",
+                                            "data": {
+                                                "id": "newUserId"
+                                            },
+                                            "meta": null
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+          "get": {
+            "tags": ["Users Endpoint"],
+            "description": "Get user by id",
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/AuthParam"
+                },
+                {
+                  "name": "id",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Get detail users by id",
+                "content": {
+                  "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                            "success": {
+                                "type": "boolean"
+                            },
+                            "message": {
+                                "type": "string"
+                            },
+                            "data": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    },
+                                    "nik": {
+                                        "type": "string"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "phone_number": {
+                                        "type": "string"
+                                    },
+                                    "gender": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "created_at": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "meta": {
+                                "type": "object"
+                            }
+                        },
+                        "examples": [
+                            {
+                                "success": true,
+                                "message": "Success get user.",
+                                "data": {
+                                    "id": "userId",
+                                    "role": "admin",
+                                    "nik": "1234567898765432",
+                                    "username": "admin",
+                                    "email": "admin@example.com",
+                                    "first_name": "ad",
+                                    "last_name": "min",
+                                    "phone_number": "0857xxx",
+                                    "gender": "male",
+                                    "address": "Somewhare in earth",
+                                    "created_at": "2025-06-05T00:00:00Z"
+                                },
+                                "meta": null
+                            }
+                        ]
+                      }
+                  }
+                }
+              },
+              "404": {
+                "description": "User not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object"
+                                },
+                                "meta": {
+                                    "type": "object"
+                                }
+                            },
+                            "examples": [
+                                {
+                                    "success": false,
+                                    "message": "User not found.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            ]
+                        }
+                    }
+                }
+              }
+            }
+          },
+          "put": {
+                "tags": ["Users Endpoint"],
+                "description": "Update user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "User id to update",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Request to edit user",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "profile_photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "nik": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "gender": {
+                                        "type": "string"
+                                    },
+                                    "phone_number": {
+                                        "type": "string"
+                                    },
+                                    "birth_date": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update user.",
+                                    "data": {
+                                        "id": "userId",
+                                        "role": "Staff",
+                                        "nik": "0298374928483828",
+                                        "username": "test",
+                                        "email": "test@example.com",
+                                        "first_name": "test",
+                                        "last_name": "ing",
+                                        "phone_number": "08xxxxxx",
+                                        "gender": "male",
+                                        "address": "Somewhere in earth"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Users Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "User id to delete",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success delete user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success delete user",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/users/{id}/change-password": {
+            "patch": {
+                "tags": ["Users Endpoint"],
+                "description": "change password",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "User id to change password",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "old_password": {
+                                        "type": "string"
+                                    },
+                                    "new_password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["old_password", "new_password"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success change password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success change password.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/customers": {
+            "get": {
+                "tags": ["Customers Endpoint"],
+                "description": "List of customers",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "description": "To search customer by name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get all customers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all customers.",
+                                    "data": [
+                                        {
+                                            "id": "customerId",
+                                            "first_name": "cus",
+                                            "last_name": "tomer",
+                                            "phone_number": "08xxxxxx",
+                                            "email": "customer@example.com",
+                                            "address": "Somewhere in earth",
+                                            "created_at": "2025-06-06T00:00:00Z"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Customers Endpoint"],
+                "description": "Create customer",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone_number": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "first_name": "cus",
+                                "last_name": "tomer",
+                                "email": "customer@example.com",
+                                "phone_number": "08xxxxxx",
+                                "address": "Somewhere in earth"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success create customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success create customer.",
+                                    "data": {
+                                        "id": "newCustomerId"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed create customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed create customer.",
+                                    "errors": ["first name field is required."]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/customers/{id}": {
+            "get": {
+                "tags": ["Customers Endpoint"],
+                "description": "Get customer by id",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "customer id to get",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get customer by id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get customer by id.",
+                                    "data": {
+                                        "id": "customerId",
+                                        "first_name": "cus",
+                                        "last_name": "tomer",
+                                        "phone_number": "08xxxxxx",
+                                        "email": "customer@example.com",
+                                        "address": "Somewhere in earth",
+                                        "created_at": "2025-06-06T00:00:00Z"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed get customer by id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed get customer by id.",
+                                    "errors": [
+                                        "id is required."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Customers Endpoint"],
+                "description": "Update customer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "Customer id to update",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone_number": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "example": {
+                                "first_name": "cus",
+                                "last_name": "tomer",
+                                "email": "customer@example.com",
+                                "phone_number": "08xxxxxx",
+                                "address": "Somewhere in earth"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update customer.",
+                                    "data": {
+                                        "first_name": "cus",
+                                        "last_name": "tomer",
+                                        "email": "customer@example.com",
+                                        "phone_number": "08xxxxxx",
+                                        "address": "Somewhere in earth"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed update customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed update customer",
+                                    "errors": [
+                                        "first name field is reqired."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Customers Endpoint"],
+                "description": "Delete customer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "Customer id to delete",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success delete customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success delete customer",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed delete customer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed delete customer",
+                                    "errors": [
+                                        "id is required"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },  
+        "/categories": {
+            "get": {
+                "tags": ["Categories Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "description": "Get list of category",
+                "responses": {
+                    "200": {
+                        "description": "Success get all category.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all category.",
+                                    "data": [
+                                        {
+                                            "id": "catagoryId",
+                                            "name": "Cuci Kering",
+                                            "created_at": "timestamp"
+                                        }
+                                    ],
+                                    "meta": null
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Categories Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "description": "Create new category",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["name"]
+                            },
+                            "example": {
+                                "name": "Cuci Kering"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success created category",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success create category.",
+                                    "data": {
+                                        "id": "categoryId"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed create category.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Failed create category.",
+                                    "errors": [
+                                        "name field is required."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/categories/{id}": {
+            "get": {
+                "tags": ["Categories Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to get category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get category.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get category.",
+                                    "data": 
+                                        {
+                                            "id": "catagoryId",
+                                            "name": "Cuci Kering",
+                                            "created_at": "timestamp"
+                                        },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "description": "Category not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed get category.",
+                                    "errors": [
+                                        "Category not found."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Categories Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to update category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["name"]
+                            },
+                            "example": {
+                                "name": "Cuci Kering Setrika"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update category",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update category.",
+                                    "data": {
+                                        "id": "categoryId",
+                                        "name": "Cuci Kering Setrika"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "description": "Category not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed update category.",
+                                    "errors": [
+                                        "Category not found."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failed create category.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Failed create category.",
+                                    "errors": [
+                                        "name field is required."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Categories Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to update category",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "description": "Delete category",
+                "responses": {
+                    "200": {
+                        "description": "Success delete category.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success delete category.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "description": "Category not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed delete category.",
+                                    "errors": [
+                                        "Category not found."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/services": {
+            "get": {
+                "tags": ["Services Endpoint"],
+                "description": "List of services",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "description": "Query to search service by name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "required": false,
+                        "description": "Filter by category id",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "description": "To set item per page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get all services.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all services.",
+                                    "data": [
+                                        {
+                                            "id": "serviceId",
+                                            "name": "Cuci Kering",
+                                            "category_name": "Kiloan",
+                                            "duration": "1 Hari",
+                                            "price": "6000",
+                                            "service_type": "Express"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Services Endpoint"],
+                "description": "Create new service",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "category_id": {
+                                        "type": "string"
+                                    },
+                                    "duration": {
+                                        "type": "string"
+                                    },
+                                    "duration_unit": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "integer"
+                                    },
+                                    "service_type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success create service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success create service.",
+                                    "data": {
+                                        "id": "serviceId"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/services/{id}": {
+            "get": {
+                "tags": ["Services Endpoint"],
+                "description": "Get service by id",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "Service id to get service by id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get service by id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get service by id.",
+                                    "data": {
+                                        "id": "serviceId",
+                                        "category_name": "Kiloan",
+                                        "category_id": "categoryId",
+                                        "duration": 1,
+                                        "duration_unit": "Days",
+                                        "name": "Cuci Kering",
+                                        "price": 6000,
+                                        "service_type": "Express"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failed get service by id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Service not found",
+                                    "errors": []
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Services Endpoint"],
+                "description": "Create service",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "Service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "category_id": {
+                                        "type": "string"
+                                    },
+                                    "duration": {
+                                        "type": "string"
+                                    },
+                                    "duration_unit": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "integer"
+                                    },
+                                    "service_type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update service.",
+                        "content": {
+                            "application/jsom": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get service by id.",
+                                    "data": {
+                                        "id": "serviceId",
+                                        "category_name": "Kiloan",
+                                        "category_id": "categoryId",
+                                        "duration": 1,
+                                        "duration_unit": "Days",
+                                        "name": "Cuci Kering",
+                                        "price": 6000,
+                                        "service_type": "Express"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "description": "Failed update service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed update service",
+                                    "errors": [
+                                        "name field is required."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Services Endpoint"],
+                "description": "Delete service",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "Service id to delete",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success delete service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success delete service",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "get": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Get list of orders",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "description": "filter by transaction status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "service",
+                        "in": "query",
+                        "required": false,
+                        "description": "filter by service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "description": "Search by customer name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get orders.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all orders.",
+                                    "data": [
+                                        {
+                                            "id": "orderId",
+                                            "order_date": "2025-06-10",
+                                            "invoice_number": "invoice_number",
+                                            "customer": {
+                                                "id": "customerId",
+                                                "name": "customerName"
+                                            },
+                                            "user": {
+                                                "id": "userId",
+                                                "name": "userName"
+                                            },
+                                            "service_name": "serviceName",
+                                            "total_price": 18000,
+                                            "status": "orderStatus",
+                                            "payment_status": "paymentStatus"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Create order",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customerId": {
+                                        "type": "string"
+                                    },
+                                    "userId": {
+                                        "type": "string"
+                                    },
+                                    "order_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "serviceId": {
+                                                    "type": "string"
+                                                },
+                                                "weight": {
+                                                    "type": "number"
+                                                },
+                                                "quantity": {
+                                                    "type": "number"
+                                                },
+                                                "notes": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success create new order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success create order.",
+                                    "data": {
+                                        "id": "orderId",
+                                        "invoice_number": "INVxxxx"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Failed create order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed create order.",
+                                    "errors": [
+                                        "customer is required."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/orders/{id}": {
+            "get": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Get order",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to get order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get order.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get order.",
+                                    "data": {
+                                            "id": "orderId",
+                                            "order_date": "2025-06-10",
+                                            "due_date": "2025-06-11",
+                                            "invoice_number": "invoice_number",
+                                            "customer": {
+                                                "id": "customerId",
+                                                "name": "customerName"
+                                            },
+                                            "user": {
+                                                "id": "userId",
+                                                "name": "userName"
+                                            },
+                                            "service_name": "serviceName",
+                                            "final_price": 18000,
+                                            "total_price": 18000,
+                                            "order_details": [
+                                                {
+                                                    "id": "orderDetailId",
+                                                    "service": {
+                                                        "id": "serviceId",
+                                                        "name": "serviceName",
+                                                        "category": {
+                                                            "id": "category_id",
+                                                            "name": "category_name"
+                                                        },
+                                                        "service_type": "express"
+                                                    },
+                                                    "weight": 3,
+                                                    "quantity": null,
+                                                    "total_price": 18000,
+                                                    "final_price": 18000,
+                                                    "notes": "apalah"
+                                                }
+                                            ],
+                                            "status": "orderStatus",
+                                            "payment_status": "paymentStatus"
+                                        },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed get order.",
+                                    "errors": [
+                                        "Order not found."
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Transactions Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to get order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "description": "Update order",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customer_id": {
+                                        "type": "string"
+                                    },
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "order_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "weight": {
+                                                    "type": "number"
+                                                },
+                                                "quantity": {
+                                                    "type": "number"
+                                                },
+                                                "notes": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update order.",
+                                    "data": {
+                                        "id": "orderId",
+                                        "invoice_number": "INVxxx"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Delete order.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to get order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success delete order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success delete order.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "description": "Order not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailedResponseSchema"
+                                },
+                                "example": {
+                                    "success": false,
+                                    "message": "Failed delete order.",
+                                    "errors": [
+                                        "Order not found."
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    }
+                }
+            }
+        },
+        "/orders/{id}/order-status": {
+            "put": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Update order status",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to update status order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update order status.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update order status.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/orders/{id}/payment-status": {
+            "put": {
+                "tags": ["Transactions Endpoint"],
+                "description": "Update payment status",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to update status payment",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "payment_status": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update order status.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success update payment status.",
+                                    "data": null,
+                                    "meta": null
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/payments": {
+            "get": {
+                "tags": ["Payments Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get list of payments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all payments.",
+                                    "data": {
+                                        "id": "paymentId",
+                                        "amount_paid": 18000,
+                                        "proof_image": "",
+                                        "payment_method": "Transfer",
+                                        "paid_at": "2025-06-10",
+                                        "created_at": "timestamp",
+                                        "updated_at": "timestamp"
+                                    },
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+        },
+        "/payments/{id}": {
+            "get": {
+                "description": "Get payment",
+                "tags": ["Payments Endpoint"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "description": "id to get payment",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get payment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get payment.",
+                                    "data": {
+                                        "id": "paymentId",
+                                        "amount_paid": 18000,
+                                        "proof_image": "",
+                                        "payment_method": "Transfer",
+                                        "paid_at": "2025-06-10",
+                                        "created_at": "timestamp",
+                                        "updated_at": "timestamp"
+                                    },
+                                    "meta": null
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/earning": {
+            "get": {
+                "tags": ["Reports Endpoint"],
+                "description": "get report earning and total order",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "start date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "end date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get earning report",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get earning report.",
+                                    "data": {
+                                        "total_earning": 1000000000,
+                                        "total_transaction": 1000
+                                    },
+                                    "meta": {
+                                        "filter": {
+                                            "start_date": "2025-01-01",
+                                            "end_date": "2025-06-10"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/order": {
+            "get": {
+                "tags": ["Reports Endpoint"],
+                "description": "get report by order",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "start date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "end date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "customer_id",
+                        "in": "query",
+                        "required": false,
+                        "description": "customer id of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": false,
+                        "description": "user id of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "service_id",
+                        "in": "query",
+                        "required": false,
+                        "description": "service id of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "description": "status of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "payment_status",
+                        "in": "query",
+                        "required": false,
+                        "description": "payment status of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get report by order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get report by order",
+                                    "data": [
+                                        {
+                                            "id": "orderId",
+                                            "order_date": "2025-06-10",
+                                            "invoice_number": "invoice_number",
+                                            "customer": {
+                                                "id": "customerId",
+                                                "name": "customerName"
+                                            },
+                                            "user": {
+                                                "id": "userId",
+                                                "name": "userName"
+                                            },
+                                            "service_name": "serviceName",
+                                            "total_price": 18000,
+                                            "status": "orderStatus",
+                                            "payment_status": "paymentStatus"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        },
+                                        "filter": {
+                                            "start_date": "",
+                                            "end_date": "",
+                                            "customer": {
+                                                "id": "",
+                                                "name": ""
+                                            },
+                                            "user": {
+                                                "id": "",
+                                                "name": "string"
+                                            },
+                                            "service": {
+                                                "id": "",
+                                                "name": ""
+                                            },
+                                            "status": "",
+                                            "payment_status": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/service": {
+            "get": {
+                "tags": ["Reports Endpoint"],
+                "description": "get report by service",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/AuthParam"
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "start date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": false,
+                        "description": "end date of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "service_id",
+                        "in": "query",
+                        "required": false,
+                        "description": "service id of order",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get report by service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccesResponseSchema"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "message": "Success get all services.",
+                                    "data": [
+                                        {
+                                            "id": "serviceId",
+                                            "name": "Cuci Kering",
+                                            "category_name": "Kiloan",
+                                            "total_order": 100,
+                                            "total_weight": 10,
+                                            "total_quantity": 100,
+                                            "total_earning": 1000000
+                                        }
+                                    ],
+                                    "meta": {
+                                        "pagination": {
+                                            "total_items": 10,
+                                            "per_page": 1,
+                                            "next_page": "",
+                                            "prev_page": "",
+                                            "first_page": "",
+                                            "last_page": ""
+                                        },
+                                        "filter": {
+                                            "start_date": "",
+                                            "end_date": "",
+                                            "service": {
+                                                "id": "",
+                                                "name": ""
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Pagination": {
+                "type": "object",
+                "properties": {
+                    "total_items": {
+                        "type": "integer"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "next_page": {
+                        "type": "string"
+                    },
+                    "prev_page": {
+                        "type": "string"
+                    },
+                    "first_page": {
+                        "type": "string"
+                    },
+                    "last_page": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SuccesResponseSchema": {
+                "type":"object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "null"
+                    },
+                    "meta": {
+                        "type": "null"
+                    }
+                }
+            },
+            "FailedResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "array"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "AuthParam": {
+                "name": "Authorization",
+                "in": "header",
+                "required": true,
+                "description": "Token to be passed as a header",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses": {
+            "Unauthorized": {
+                "description": "Unauthorized request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "example": {
+                            "success": false,
+                            "message": "You don't have permission to make this request.",
+                            "errors": []
+                        }
+                    }
+                }
+            },
+            "ServerError": {
+                "description": "Server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "type":"array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "example": {
+                            "success": false,
+                            "message": "Internal server error.",
+                            "errors": ["example error"]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
